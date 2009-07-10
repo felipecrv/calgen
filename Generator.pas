@@ -1,6 +1,11 @@
 unit Generator;
 
 interface
+type
+	TinyStr = string[10];
+
+uses
+	CalendarUtils;
 
 type
 	TGeneratorOptions = record
@@ -32,14 +37,251 @@ procedure GenerateCalendar(Y: integer);
 
 implementation
 
-procedure GenerateOneMonthCalendar(Y: integer; M: byte);
+var
+	Out: Text; { Saída }
+	Style: Text; { Folha de Estilo }
+
+{ Abre um arquivo e dá mensagem de erro se ele não existir }
+procedure AssignFile(var F: Text; Path: string);
+var
+	IOR: Integer;
 begin
-	WriteLn('mes');
+	Assign(F, Path);
+	{$I-} Reset(F); {$I+}
+	IOR := IOResult;
+	if IOR = 2 then
+	 begin
+		WriteLn(StdErr, ParamStr(0), ': ', Path, ': Arquivo não encontrado');
+		Halt(2);
+	 end
+	else
+		if IOR <> 0 then Halt(1);
 end;
 
-procedure GenerateCalendar(Y: integer);
+{ Inicialização do generator }
+procedure GeneratorInit;
 begin
-	WriteLn('ano');
+	{ Inicialização da Saída }
+	if not GenOptions.OutputOnStdOut then
+	 begin
+		AssignFile(Out, GenOptions.OutputFilePath);
+		Rewrite(Out);
+	 end;
+
+	{ Inicialização do arquivo de estilo CSS }
+	if GenOptions.EmbedStyle then
+		AssignFile(Style, GenOptions.Style);
+end;
+
+{ Final da execução do generator }
+procedure GeneratorExit;
+begin
+	{ Fecha arquivo de saída }
+	if not GenOptions.OutputOnStdOut then
+		Close(Out);
+
+	{ Fecha o arquivo de estilo }
+	if GenOptions.EmbedStyle then
+		Close(Style);
+end;
+
+{ Imprime um texto na saída padoa ou no arquivo de saíuda }
+procedure OutputText(O: string);
+begin
+	if GenOptions.OutputOnStdOut then Write(O)
+	else Write(Out, O);
+end;
+
+procedure OutputLn(O: string);
+begin
+	if GenOptions.OutputOnStdOut then WriteLn(O)
+	else WriteLn(Out, O);
+end;
+
+{ Imprime os links p/ os arquivos CSS ou o próprio CSS embedded }
+procedure OutputCssStyle;
+var
+	L: string[255];
+begin
+	{ Insere o CSS, "linkado" ou "embedded" }
+	if not GenOptions.EmbedStyle then
+	 begin
+		OutputText('<link href="');
+		OutputText(GenOptions.Style);
+		OutputLn('" rel="stylesheet" type="text/css" />');
+	 end
+	else
+	 begin
+		OutputLn('
+<style type="text/css">');
+		while not eof(Style) do
+		 begin
+			ReadLn(Style, L);
+			OutputLn(L);
+		 end;
+		OutputLn('</style>
+');
+	 end;
+end;
+
+{ Gera o cabeçalho do arquivo html }
+procedure GenerateHeader;
+begin
+	OutputText('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+<title>');
+	OutputText(GenOptions.PageTitle);
+	OutputLn('</title>');
+	OutputCssStyle;
+	OutputLn('</head>
+<body>
+
+<div id="content">');
+end;
+
+{ Gera o espaçamento no início e no fim do calendário }
+procedure GeneratePadding(Padding: byte);
+var i: byte;
+begin
+	for i := 1 to Padding do
+		OutputLn('	<td>&nbsp;</td>');
+end;
+
+{ Gera a céĺula que representa o dia na tabela }
+procedure GenerateDay(Day: integer);
+var
+	DayStr: TinyStr;
+begin
+	Str(Day, DayStr);
+	OutputText('	<td>');
+	OutputText(DayStr);
+	OutputLn('</td>');
+end;
+
+{ Gera o rodapé do arquivo html }
+procedure GenerateFooter;
+begin
+	OutputLn('</div>
+
+</body>
+</html>
+');
+end;
+
+{ Imprime o calendário(mês) e altera o WeekDayStart p/ o do próximo mês }
+procedure GenerateMonth(Y, M: integer; var WeekDayStart: integer);
+var
+	MLen, EndPad, D, i: integer;
+begin
+	OutputText('<table class="month-calendar" cellspacing="0" cellpadding="0"
+		summary="Calendário de ');
+	OutputText(Months[M]);
+	OutputLn('">');
+	OutputText('<caption>');
+	OutputText(Months[M]);
+	OutputLn('</caption>');
+
+	OutputLn(' <tr>
+	<th scope="col" abbr="Domingo" title="Domingo">D</th>
+	<th scope="col" abbr="Segunda" title="Segunda">S</th>
+	<th scope="col" abbr="Terça" title="Terça">T</th>
+	<th scope="col" abbr="Quarta" title="Quarta">Q</th>
+	<th scope="col" abbr="Quinta" title="Quinta">Q</th>
+	<th scope="col" abbr="Sexta" title="Sexta">S</th>
+	<th scope="col" abbr="Sábado" title="Sábado">S</th>
+ </tr>');
+
+
+	{ Imprimindo os dias }
+	OutputLn(' <tr>'); { Abre a semana }
+	GeneratePadding(WeekDayStart - 1); { Espaçamento }
+	MLen := MonthLen(Y, M); { Tamanho do mês }
+	D := 1; { Dia do mês }
+	i := WeekDayStart; { Contador de células da semana }
+	repeat
+		GenerateDay(D); { Imprime a célula do dia D }
+		Inc(D); Inc(i);
+		if i = 8 then
+		 begin
+			{ Fecha semana e abre outra}
+			OutputLn(' </tr>
+ <tr>');
+			i := 1;
+		 end;
+	until D > MLen;
+	{ Calcula o espaçamento final e gera-o }
+	EndPad := 8 - i;
+	GeneratePadding(EndPad);
+	{ Fecha semana e mês }
+	OutputLn(' </tr>
+</table>
+');
+
+	{ Retorna o dia da semana em que o próximo mês vai começar. Isso faz com que
+	não seja necessário chamar FirstWeekDayOfMonth() na hora de gerar cada mês. }
+	WeekDayStart := 8 - EndPad;
+end;
+
+{ Gera o calendário de apenas um mês }
+procedure GenerateOneMonthCalendar(Y: integer; M: byte);
+var
+	DayStart: integer; { Primeiro dia do mês }
+begin
+	GeneratorInit;
+	{ Gera o cabeçalho do arquivo html }
+	GenerateHeader;
+
+	{ Gera o calendário do mês }
+	DayStart := FirstWeekDayOfMonth(Y, M);
+	GenerateMonth(Y, M, DayStart);
+
+	{ Gera o rodapé do arquivo html }
+	GenerateFooter;
+
+	GeneratorExit;
+end;
+
+{ Gera o calendário completo de um ano }
+procedure GenerateCalendar(Y: integer);
+var
+	DayStart, M, i: integer;
+	YearStr: TinyStr;
+begin
+	GeneratorInit;
+	{ Gera o cabeçalho do arquivo html }
+	GenerateHeader;
+
+	OutputText('<h1>');
+	Str(Y, YearStr);
+	OutputText(YearStr);
+	OutputLn('</h1>
+');
+
+	DayStart := FirstWeekDayOfMonth(Y, 1); { Primeiro dia do ano }
+	M := 1; { Contador de mês }
+	i := 1; { Contador de mês na linha }
+	OutputLn('<div class="month-set">'); { Abre o month-set }
+	repeat
+		GenerateMonth(Y, M, DayStart); { Gera o mês }
+		Inc(M); Inc(i);
+		if i = GenOptions.Cols + 1 then
+		 begin
+			{ Abre e fecha o month-set }
+			OutputLn('</div>
+<div class="month-set">');
+			i := 1;
+		 end;
+	until M > 12;
+	OutputLn('</div>'); { Fecha o month-set }
+
+
+	{ Gera o rodapé do arquivo html }
+	GenerateFooter;
+
+	GeneratorExit;
 end;
 
 end.
