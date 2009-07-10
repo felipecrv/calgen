@@ -4,9 +4,6 @@ program CalGen;
 uses
 	Generator;
 
-type
-	TinyStr = string[10];
-
 const
 	USAGE =
 'Uso: calgen [OPCAO]... [[MES] ANO]
@@ -21,6 +18,7 @@ const
  Opções:
    -o       Nome do arquivo de saída
    -s       Nome do arquivo de estilo CSS
+   -ne      Não inserir a folha de estilo no arquivo de saída
    -c       Quantidade de colunas
    -t       Título da página
 ';
@@ -100,6 +98,8 @@ begin
 		if not ValidateInt(Cols, GenOptions.Cols) then
 			InvalidParam(ParamStr(Index + 1));
 	 end
+	else if P = '-ne' then
+		GenOptions.EmbedStyle := false
 	else
 		InvalidParam(P);
 end;
@@ -117,6 +117,7 @@ begin
 	GenOptions.EmbedStyle := true;
 	GenOptions.OutputOnStdOut := true;
 	GenOptions.OneMonth := true;
+	GenOptions.Cols := 3;
 	GetTimeStamp(T);
 	Year := T.Year;
 	Month := T.Month;
