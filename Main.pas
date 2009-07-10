@@ -4,6 +4,9 @@ program CalGen;
 uses
 	Generator;
 
+type
+	TinyStr = string[10];
+
 const
 	USAGE =
 'Uso: calgen [OPCAO]... [[MES] ANO]
@@ -103,6 +106,7 @@ end;
 
 var
 	T: TimeStamp;
+	MonthStr, YearStr: TinyStr;
 	{ Usados na manipulação dos argumentos }
 	i, j, Tmp, Year, Month: integer;
 	Param: string;
@@ -116,12 +120,12 @@ begin
 	GetTimeStamp(T);
 	Year := T.Year;
 	Month := T.Month;
+	Str(Year, YearStr);
+	GenOptions.PageTitle := 'Calendário de ' + Months[Month] + '/' + YearStr;
 
 	{ Se não houver nenhum argumento gerar calendário do mês atual }
 	if (ParamCount = 0) then
 	 begin
-		{ Título default }
-		GenOptions.PageTitle := 'Calendário de' + Months[Month] + '/' + String(Year);
 		GenerateOneMonthCalendar(Year, Month);
 		Halt;
 	 end;
@@ -186,14 +190,24 @@ begin
 
 	{ Valida mês e ano }
 	if (Month < 1) or (Month > 12) then
-		InvalidMonth(String(Month));
+	 begin
+		Str(Month, MonthStr);
+		InvalidMonth(MonthStr);
+	 end;
 	if (Year < 1) or (Year > 5875706) then
-		InvalidYear(String(Year));
+	 begin
+		Str(Year, YearStr);
+		InvalidYear(YearStr);
+	 end;
 
 	{ Gera calendário }
 	if GenOptions.OneMonth then
 		GenerateOneMonthCalendar(Year, Month)
 	else
+	 begin
+		Str(Year, YearStr);
+		GenOptions.PageTitle := 'Calendário de ' + YearStr;
 		GenerateCalendar(Year);
+	 end;
 end.
 
