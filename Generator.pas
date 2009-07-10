@@ -14,6 +14,8 @@ type
 		Style: string[511];
 		{ O CSS vai junto ao HTML }
 		EmbedStyle: boolean;
+		{ É o calendário de um mês apenas}
+		OneMonth: boolean;
 		{ Quantidade de colunas }
 		Cols: integer;
 	end;

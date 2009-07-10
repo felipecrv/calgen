@@ -105,7 +105,6 @@ var
 	T: TimeStamp;
 	{ Usados na manipulação dos argumentos }
 	i, j, Tmp, Year, Month: integer;
-	OneMonth: boolean;
 	Param: string;
 
 begin
@@ -113,6 +112,7 @@ begin
 	GenOptions.Style := 'default.css';
 	GenOptions.EmbedStyle := true;
 	GenOptions.OutputOnStdOut := true;
+	GenOptions.OneMonth := true;
 	GetTimeStamp(T);
 	Year := T.Year;
 	Month := T.Month;
@@ -139,7 +139,6 @@ begin
 
 	{ Acessando os argumentos (ParamCount > 0) }
 	i := 1;
-	OneMonth := true;
 	while i <= ParamCount do
 	 begin
 		Param := ParamStr(i);
@@ -166,7 +165,7 @@ begin
 				else
 				 begin
 					Year := Tmp;
-					OneMonth := false;
+					GenOptions.OneMonth := false;
 				 end;
 			 end
 			else
@@ -192,7 +191,7 @@ begin
 		InvalidYear(String(Year));
 
 	{ Gera calendário }
-	if OneMonth then
+	if GenOptions.OneMonth then
 		GenerateOneMonthCalendar(Year, Month)
 	else
 		GenerateCalendar(Year);
