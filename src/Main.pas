@@ -27,7 +27,7 @@ const
 
 procedure InvalidYear(Y: string);
 begin
-	WriteLn(StdErr, ParamStr(0), ': ano ', Y, ' não está no intervalo 1..5875706');
+	WriteLn(StdErr, ParamStr(0), ': ano ', Y, ' não está no intervalo 1900..5875706');
 	Halt(64);
 end;
 
@@ -195,7 +195,7 @@ begin
 		Str(Month, MonthStr);
 		InvalidMonth(MonthStr);
 	 end;
-	if (Year < 1) or (Year > 5875706) then
+	if (Year < 1900) or (Year > 5875706) then
 	 begin
 		Str(Year, YearStr);
 		InvalidYear(YearStr);
