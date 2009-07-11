@@ -15,6 +15,10 @@ const
    calgen -c 3 -o calendario.html
    calgen -s custom.css
 
+ Folhas de estilo built-in:
+   default.css
+   food.css
+
  Opções:
    -o       Nome do arquivo de saída
    -s       Nome do arquivo de estilo CSS
