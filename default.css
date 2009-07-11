@@ -59,8 +59,3 @@ td {
 	background-color: #F4F3EE;
 }
 
-td a:hover, td a:active {
-	color: #6aa3ae;
-	background: url(images/bg_calendar.gif) no-repeat right top;
-}
-
