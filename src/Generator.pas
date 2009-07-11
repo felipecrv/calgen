@@ -93,7 +93,9 @@ begin
 	{ Inicialização da Saída }
 	if not GenOptions.OutputOnStdOut then
 	 begin
-		IOR := AssignFile(Out, GenOptions.OutputFilePath, true);
+		IOR := AssignFile(Out, GenOptions.OutputFilePath, false);
+		if (IOR <> 0) and (IOR <> 442) then
+			IOError(IOR, GenOptions.OutputFilePath);
 		Rewrite(Out);
 	 end;
 
