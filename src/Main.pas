@@ -109,7 +109,7 @@ var
 	MonthStr, YearStr: TinyStr;
 	{ Usados na manipulação dos argumentos }
 	i, j, Tmp, Year, Month: integer;
-	Param: string;
+	Param: string[511];
 
 begin
 	{ Algumas opções /default/ }

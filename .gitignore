@@ -4,4 +4,6 @@
 *.html
 a.out
 *.py
+calgen
+win32
 

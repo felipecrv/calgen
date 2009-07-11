@@ -105,9 +105,9 @@ begin
 		{ Se ocorreu algum erro }
 		if IOR <> 0 then
 		 begin
-			{ Se o arquivo não foi encontrado e é possível achá-lo no
-			 STYLESHEET_PATH }
-			if (IOR = 442) and (not AbsPath(GenOptions.Style)) then
+			{ Se o arquivo não foi encontrado e é possível achá-lo no STYLESHEET_PATH
+			  OBS: No Windows não haverá busca de folhas de estilo no STYLESHEETS_PATH }
+			if (not WIN32) and (IOR = 442) and (not AbsPath(GenOptions.Style)) then
 			 begin
 				{ Procura pela folha de estilo no STYLESHEETS_PATH }
 				WriteLn(StdErr, ParamStr(0), ': ',
@@ -201,7 +201,7 @@ begin
 		OutputLn('	<td>&nbsp;</td>');
 end;
 
-{ Gera a céĺula que representa o dia na tabela }
+{ Gera a célula que representa o dia na tabela }
 procedure GenerateDay(Day: integer);
 var
 	DayStr: TinyStr;
@@ -337,3 +337,4 @@ begin
 end;
 
 end.
+
