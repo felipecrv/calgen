@@ -1,0 +1,61 @@
+body {
+	font: normal 12px/20px serif;
+	color: #240D1C;
+	background-color: #DDDDDD;
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	padding-left: 45px;
+	font-size: xx-large;
+}
+
+#content {
+	margin: 30px auto;
+}
+
+.month-calendar {
+	width: 141px;
+	float: left;
+	padding: 0;
+	margin: 0;
+	margin-bottom: 12px;
+	margin-left: 16px;
+	border-left: 1px solid #240D1C;
+	font: normal 12px/20px serif;
+	color: #240D1C;
+	text-align: center;
+	background-color: #fff;
+}
+
+.month-set { clear: both; }
+
+caption {
+	margin: 0;
+	padding: 0;
+	width: 141px;
+	background: #240D1C;
+	color: #fff;
+	font: bold 12px serif;
+	text-align: center;
+}
+
+th {
+	font: bold 11px/20px serif;
+	color: #FFEBAE;
+	background: #916F53;
+	border-right: 1px solid #240D1C;
+	border-bottom: 1px solid #240D1C;
+	border-top: 1px solid #240D1C;
+}
+
+td {
+	border-right: 1px solid #240D1C;
+	border-bottom: 1px solid #240D1C;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	background-color: #FFEBAE;
+}
+
