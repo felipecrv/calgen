@@ -5,7 +5,7 @@ type
 	TinyStr = string[10];
 
 uses
-	CalendarUtils;
+	CalendarUtils, Config;
 
 type
 	TGeneratorOptions = record
@@ -41,36 +41,86 @@ var
 	Out: Text; { Saída }
 	Style: Text; { Folha de Estilo }
 
+{ Exibe a mensagem de erro e fecha o programa }
+procedure IOError(IOR: integer; F: string);
+begin
+	if IOR = 442 then
+	 begin
+		WriteLn(StdErr, ParamStr(0), ': ', F, ': Arquivo não encontrado');
+		Halt(2);
+	 end
+	else
+	 begin
+		WriteLn(StdErr, ParamStr(0), ': IOError: IOResult = #', IOR,
+		' ao ler arquivo ', F);
+		Halt(1);
+	 end;	
+end;
+
 { Abre um arquivo e dá mensagem de erro se ele não existir }
-procedure AssignFile(var F: Text; Path: string);
+function AssignFile(var F: Text; Path: string; RaiseError: boolean): integer;
 var
 	IOR: Integer;
 begin
 	Assign(F, Path);
 	{$I-} Reset(F); {$I+}
 	IOR := IOResult;
-	if IOR = 2 then
-	 begin
-		WriteLn(StdErr, ParamStr(0), ': ', Path, ': Arquivo não encontrado');
-		Halt(2);
-	 end
-	else
-		if IOR <> 0 then Halt(1);
+	{ Se o erro tiver que ser disparado ele será ;-) }
+	if RaiseError then
+		if IOR <> 0 then IOError(IOR, Path);
+
+	{ ...senão AssignFile retorna o IOResult para que seja possível tratar o
+	erro de outra forma. }
+	AssignFile := IOR;
 end;
 
+function AbsPath(P: string): boolean;
+begin
+	{ Exemplos:
+		/home/felipe/style.css
+		../style.css
+		./style.css
+		C:\style.css
+	}
+	AbsPath := (P[1] = '/') or (P[1] = '\') or (P[1] = '.') or (P[2] = ':');
+end;
+		
 { Inicialização do generator }
 procedure GeneratorInit;
+var
+	IOR: integer;
 begin
 	{ Inicialização da Saída }
 	if not GenOptions.OutputOnStdOut then
 	 begin
-		AssignFile(Out, GenOptions.OutputFilePath);
+		IOR := AssignFile(Out, GenOptions.OutputFilePath, true);
 		Rewrite(Out);
 	 end;
 
 	{ Inicialização do arquivo de estilo CSS }
 	if GenOptions.EmbedStyle then
-		AssignFile(Style, GenOptions.Style);
+	 begin
+		IOR := AssignFile(Style, GenOptions.Style, false);
+
+		{ Se ocorreu algum erro }
+		if IOR <> 0 then
+		 begin
+			{ Se o arquivo não foi encontrado e é possível achá-lo no
+			 STYLESHEET_PATH }
+			if (IOR = 442) and (not AbsPath(GenOptions.Style)) then
+			 begin
+				{ Procura pela folha de estilo no STYLESHEETS_PATH }
+				WriteLn(StdErr, ParamStr(0), ': ',
+				GenOptions.Style, ': Arquivo  não encontrado');
+				WriteLn(StdErr, ParamStr(0), ': Procurando por ',
+					GenOptions.Style, ' em ', STYLESHEETS_PATH);
+				GenOptions.Style := STYLESHEETS_PATH + GenOptions.Style;
+				IOR := AssignFile(Style, GenOptions.Style, true);
+			 end
+			else				
+				IOError(IOR, GenOptions.Style);
+		 end;
+	 end;
 end;
 
 { Final da execução do generator }
@@ -146,6 +196,7 @@ end;
 procedure GeneratePadding(Padding: byte);
 var i: byte;
 begin
+	Padding := Padding mod 7;
 	for i := 1 to Padding do
 		OutputLn('	<td>&nbsp;</td>');
 end;
@@ -213,7 +264,7 @@ begin
 		 end;
 	until D > MLen;
 	{ Calcula o espaçamento final e gera-o }
-	EndPad := 8 - i;
+	EndPad := 8 - i; { i < 8 }
 	GeneratePadding(EndPad);
 	{ Fecha semana e mês }
 	OutputLn(' </tr>
@@ -222,6 +273,7 @@ begin
 
 	{ Retorna o dia da semana em que o próximo mês vai começar. Isso faz com que
 	não seja necessário chamar FirstWeekDayOfMonth() na hora de gerar cada mês. }
+	{ (7 >= EndPad >= 1) ==> (1 <= WeekDayStart <= 7) }
 	WeekDayStart := 8 - EndPad;
 end;
 
