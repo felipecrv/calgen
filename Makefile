@@ -2,27 +2,28 @@
 CONV=iconv -f UTF-8 -t ISO-8859-1 -o
 MKD=mkdir -p
 MAKE=make
-RM=rm
+RM=rm -f
 RMDIR=rm -R
 INSTALL=install
-SUDO=sudo
 BASE_PATH=/usr/local/
 STYLESHEETS=stylesheets/default.css stylesheets/food.css \
 			stylesheets/classic.css stylesheets/dark.css \
 			stylesheets/vintage.css stylesheets/clean.css
+DIST_FILES=build/ src/ stylesheets/ www/ AUTHOR \
+				 calgen Makefile README VERSION
 
 all:
 	$(MAKE) -C build
 
-install: all
-	$(SUDO) $(INSTALL) -T calgen $(BASE_PATH)bin/calgen
-	$(SUDO) $(MKD) $(BASE_PATH)share/calgen/
-	$(SUDO) $(MKD) $(BASE_PATH)share/calgen/stylesheets/
-	$(SUDO) $(INSTALL) $(STYLESHEETS) $(BASE_PATH)share/calgen/stylesheets/
+install:
+	$(INSTALL) -T calgen $(BASE_PATH)bin/calgen
+	$(MKD) $(BASE_PATH)share/calgen/
+	$(MKD) $(BASE_PATH)share/calgen/stylesheets/
+	$(INSTALL) $(STYLESHEETS) $(BASE_PATH)share/calgen/stylesheets/
 
 unistall:
-	$(SUDO) $(RM) $(BASE_PATH)bin/calgen
-	$(SUDO) $(RMDIR) $(BASE_PATH)share/calgen
+	$(RM) $(BASE_PATH)bin/calgen
+	$(RMDIR) $(BASE_PATH)share/calgen
 
 count:
 	cat src/*.pas | wc -l
@@ -37,9 +38,19 @@ win32: force_look
 	$(MAKE) -C win32/build
 
 clean:
-	$(RM) calgen
+	#$(RM) calgen
 	$(RM) out.html
-	$(RM) win32/calgen
+	#$(RM) win32/calgen
+	$(RM) win32/out.html
+	$(RM) build/*.o build/*.gpi
+	$(RM) win32/build/*.o win32/build/*.gpi
+	$(RM) *.tar.gz
+
+dist: all win32 clean
+	$(MKD) calgen-`cat VERSION`
+	cp -R $(DIST_FILES) calgen-`cat VERSION`/
+	tar -c calgen-`cat VERSION`/ | gzip > calgen-`cat VERSION`.tar.gz
+	$(RMDIR) calgen-`cat VERSION`
 
 force_look:
 	true

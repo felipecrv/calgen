@@ -1,0 +1,42 @@
+
+                                        04 de Julho de 2009
+
+Instalação
+-----------------------------------------------------------
+
+ Não é necessário compilar o código. Para instalar o calgen
+ basta usar:
+  
+     # make install
+
+Compilação
+-----------------------------------------------------------
+
+ Se você deseja alterar o código e recompilar o calgen,
+ basta ter o gpc e o make instalados:
+
+     $ make
+     # make install
+
+Desinstalação
+-----------------------------------------------------------
+
+     # make uninstall
+
+Ajuda
+-----------------------------------------------------------
+
+  Para aprender como usar o calgen use:
+
+     $ calgen -h
+
+Frontend Web
+-----------------------------------------------------------
+
+  Para usar basta colocar os arquivos do diretório www em
+  uma pasta do servidor web com suporte a PHP.
+
+  OBS: é necessário instalar o calgen antes.
+
+  Versão Online: http://quilerapps.com/calgen
+
