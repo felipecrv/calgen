@@ -85,6 +85,14 @@ begin
 	 end;
 end;
 
+var
+	T: TimeStamp;
+	MonthStr, YearStr: TinyStr;
+	{ Usados na manipulação dos argumentos }
+	i, j, Tmp, Year, Month: integer;
+	Param: string[511];
+	CustomPageTitle: boolean;
+
 { Trata uma opção da linha de comando }
 procedure HandleParam(P: string; var Index: integer);
 var
@@ -92,7 +100,10 @@ var
 	E: integer;
 begin
 	if P = '-t' then
+	 begin
+		CustomPageTitle := true;
 		NextParam(Index, P, GenOptions.PageTitle)
+	 end
 	else if P = '-s' then
 		NextParam(Index, P, GenOptions.Style)
 	else if P = '-o' then
@@ -112,13 +123,6 @@ begin
 		InvalidParam(P);
 end;
 
-var
-	T: TimeStamp;
-	MonthStr, YearStr: TinyStr;
-	{ Usados na manipulação dos argumentos }
-	i, j, Tmp, Year, Month: integer;
-	Param: string[511];
-
 begin
 	{ Algumas opções /default/ }
 	GenOptions.Style := 'default.css';
@@ -126,6 +130,7 @@ begin
 	GenOptions.OutputOnStdOut := true;
 	GenOptions.OneMonth := true;
 	GenOptions.Cols := 3;
+	CustomPageTitle := false;
 	GetTimeStamp(T);
 	Year := T.Year;
 	Month := T.Month;
@@ -213,13 +218,15 @@ begin
 	if GenOptions.OneMonth then
 	 begin
 		Str(Year, YearStr);
-		GenOptions.PageTitle := 'Calendário de ' + Months[Month] + '/' + YearStr;
+		if not CustomPageTitle then
+			GenOptions.PageTitle := 'Calendário de ' + Months[Month] + '/' + YearStr;
 		GenerateOneMonthCalendar(Year, Month);
 	 end
 	else
 	 begin
 		Str(Year, YearStr);
-		GenOptions.PageTitle := 'Calendário de ' + YearStr;
+		if not CustomPageTitle then
+			GenOptions.PageTitle := 'Calendário de ' + YearStr;
 		GenerateCalendar(Year);
 	 end;
 end.
