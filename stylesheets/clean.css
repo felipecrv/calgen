@@ -1,0 +1,49 @@
+body {
+	font: normal 12px/20px serif;
+	color: #3C0C00;
+	background-color: #F2F2F2;
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	padding-left: 45px;
+	font-size: xx-large;
+}
+
+#content {
+	margin: 30px auto;
+}
+
+.month-calendar {
+	width: 141px;
+	float: left;
+	padding: 0;
+	margin: 0;
+	margin-bottom: 12px;
+	margin-left: 16px;
+	font: normal 12px/20px serif;
+	text-align: center;
+}
+
+.month-set { clear: both; }
+
+caption {
+	margin: 0;
+	padding: 0;
+	width: 141px;
+	font: bold 12px serif;
+	text-align: center;
+}
+
+th {
+	font: bold 11px/20px serif;
+}
+
+td {
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	background-color: #ECD573;
+}
+

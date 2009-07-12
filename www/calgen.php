@@ -22,7 +22,8 @@ if ($cols < 0 || $cols > 12)
 	error('Quantidade de colunas inválida');
 
 $style = get('style');
-if (!in_array($style, array('default.css', 'food.css')))
+if (!in_array($style, array('default.css', 'food.css', 'classic.css',
+		'dark.css', 'vintage.css', 'clean.css')))
 	error('Tema inválido');
 
 print `calgen -s $style -c $cols $m $y`;

@@ -1,0 +1,63 @@
+body {
+	font: normal 12px/20px Georgia, serif;
+	color: black;
+	background-color: white;
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	padding-left: 45px;
+	font-size: xx-large;
+	font-style: italic;
+	font-weight: bold;
+}
+
+#content {
+	margin: 30px auto;
+}
+
+.month-calendar {
+	width: 141px;
+	float: left;
+	padding: 0;
+	margin: 0;
+	margin-bottom: 12px;
+	margin-left: 16px;
+	border-left: 1px solid black;
+	font: normal 12px/20px Georgia, serif;
+	color: black;
+	text-align: center;
+	background-color: white;
+}
+
+.month-set { clear: both; }
+
+caption {
+	margin: 0;
+	padding: 5px 10px 5px 5px;
+	width: 141px;
+	background: black;
+	color: white;
+	font: bold 1.2em Georgia, serif;
+	text-align: right;
+	font-variant: small-caps;
+}
+
+th {
+	font: bold 11px/20px Georgia, serif;
+	color: white;
+	background: gray;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+	border-top: 1px solid black;
+}
+
+td {
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+}
+

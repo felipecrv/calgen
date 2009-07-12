@@ -7,7 +7,9 @@ RMDIR=rm -R
 INSTALL=install
 SUDO=sudo
 BASE_PATH=/usr/local/
-STYLESHEETS=stylesheets/default.css stylesheets/food.css
+STYLESHEETS=stylesheets/default.css stylesheets/food.css \
+			stylesheets/classic.css stylesheets/dark.css \
+			stylesheets/vintage.css stylesheets/clean.css
 
 all:
 	$(MAKE) -C build

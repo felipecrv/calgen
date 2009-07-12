@@ -18,6 +18,10 @@ const
  Folhas de estilo built-in:
    default.css
    food.css
+   classic.css
+   dark.css
+   vintage.css
+   clean.css
 
  Opções:
    -o       Nome do arquivo de saída
