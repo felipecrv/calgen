@@ -1,9 +1,9 @@
 *.swp
 *.o
 *.gpi
-*.html
 a.out
 *.py
+out.html
 calgen
 win32
 
