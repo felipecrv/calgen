@@ -183,7 +183,9 @@ begin
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+<meta http-equiv="Content-Type" content="text/html; charset=');
+	if WIN32 then OutputText('iso-8859-1') else OutputText('utf8');
+	OutputText('" />
 <title>');
 	OutputText(GenOptions.PageTitle);
 	OutputLn('</title>');
