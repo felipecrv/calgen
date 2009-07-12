@@ -9,7 +9,7 @@ function get($key) {
 
 $y = intval(get('year'));
 if ($y < 1900 || $y > 5875706)
-	error('Ano inválido');
+	error('Ano inválido, não está entre 1900 e 5875706');
 
 $m = intval(get('month'));
 if ($m < 0 || $m > 12)
@@ -26,7 +26,7 @@ if (!in_array($style, array('default.css', 'food.css', 'classic.css',
 		'dark.css', 'vintage.css', 'clean.css')))
 	error('Tema inválido');
 
-print `calgen -s $style -c $cols $m $y`;
+print `/usr/local/bin/calgen -s $style -c $cols $m $y`;
 ?>
 
 <?php
