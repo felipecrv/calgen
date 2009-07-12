@@ -186,6 +186,7 @@ begin
 <meta http-equiv="Content-Type" content="text/html; charset=');
 	if WIN32 then OutputText('iso-8859-1') else OutputText('utf8');
 	OutputText('" />
+<meta name="generator" content="CalGen 1.0"/>
 <title>');
 	OutputText(GenOptions.PageTitle);
 	OutputLn('</title>');
