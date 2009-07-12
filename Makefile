@@ -3,6 +3,7 @@ CONV=iconv -f UTF-8 -t ISO-8859-1 -o
 MKD=mkdir -p
 MAKE=make
 RM=rm
+RMDIR=rm -R
 INSTALL=install
 SUDO=sudo
 BASE_PATH=/usr/local/
@@ -16,6 +17,10 @@ install: all
 	$(SUDO) $(MKD) $(BASE_PATH)share/calgen/
 	$(SUDO) $(MKD) $(BASE_PATH)share/calgen/stylesheets/
 	$(SUDO) $(INSTALL) $(STYLESHEETS) $(BASE_PATH)share/calgen/stylesheets/
+
+unistall:
+	$(SUDO) $(RM) $(BASE_PATH)bin/calgen
+	$(SUDO) $(RMDIR) $(BASE_PATH)share/calgen
 
 count:
 	cat src/*.pas | wc -l
