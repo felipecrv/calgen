@@ -125,12 +125,12 @@ begin
 	GetTimeStamp(T);
 	Year := T.Year;
 	Month := T.Month;
-	Str(Year, YearStr);
-	GenOptions.PageTitle := 'Calendário de ' + Months[Month] + '/' + YearStr;
 
 	{ Se não houver nenhum argumento gerar calendário do mês atual }
 	if (ParamCount = 0) then
 	 begin
+		Str(Year, YearStr);
+		GenOptions.PageTitle := 'Calendário de ' + Months[Month] + '/' + YearStr;
 		GenerateOneMonthCalendar(Year, Month);
 		Halt;
 	 end;
@@ -207,7 +207,11 @@ begin
 
 	{ Gera calendário }
 	if GenOptions.OneMonth then
-		GenerateOneMonthCalendar(Year, Month)
+	 begin
+		Str(Year, YearStr);
+		GenOptions.PageTitle := 'Calendário de ' + Months[Month] + '/' + YearStr;
+		GenerateOneMonthCalendar(Year, Month);
+	 end
 	else
 	 begin
 		Str(Year, YearStr);
