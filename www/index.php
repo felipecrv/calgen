@@ -9,8 +9,8 @@
 </head>
 
 <frameset cols="25%,75%">
-	<frame src="options.html"/>
-	<frame name="calendar" src="calgen.php?year=2009&month=0&cols=4&style=default.css"/>
+	<frame src="options.php"/>
+	<frame name="calendar" src="calgen.php?year=<?=date('Y') ?>&month=0&cols=4&style=default.css"/>
 
 	<noframes>
 		<body>Seu Browser não suporta frames</body>

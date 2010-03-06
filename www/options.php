@@ -49,7 +49,7 @@ a {
 
 	<form method="get" action="calgen.php" target="calendar">
 		<label for="year">Ano</label>
-		<input type="text" value="2009" name="year"/>
+		<input type="text" value="<?=date('Y') ?>" name="year"/>
 
 		<label for="month">Mês</label>
 		<select name="month">
